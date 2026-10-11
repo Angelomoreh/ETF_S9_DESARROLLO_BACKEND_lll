@@ -1,0 +1,116 @@
+{
+  "info": {
+    "_postman_id": "b10d3f0e-cfb7-4df0-8d42-banco-xyz-eft",
+    "name": "Banco XYZ EFT Backend III",
+    "description": "Pruebas de Spring Batch, BFF, microservicios, OAuth2, HTTPS, Kafka y resiliencia.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "gatewayUrl", "value": "https://localhost:8443" },
+    { "key": "keycloakUrl", "value": "http://localhost:8180" },
+    { "key": "accessToken", "value": "" },
+    { "key": "atmKey", "value": "BANCO-XYZ-ATM-2026" }
+  ],
+  "item": [
+    {
+      "name": "01 Obtener token OAuth2",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "const body = pm.response.json();",
+            "pm.collectionVariables.set('accessToken', body.access_token);",
+            "pm.test('Token recibido', () => pm.expect(body.access_token).to.be.a('string'));"
+          ]
+        }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            { "key": "grant_type", "value": "password", "type": "text" },
+            { "key": "client_id", "value": "banco-api", "type": "text" },
+            { "key": "username", "value": "angelo", "type": "text" },
+            { "key": "password", "value": "angelo123", "type": "text" }
+          ]
+        },
+        "url": "{{keycloakUrl}}/realms/banco-xyz/protocol/openid-connect/token"
+      }
+    },
+    {
+      "name": "02 HTTPS sin token responde 401",
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('Acceso rechazado', () => pm.response.to.have.status(401));"] }
+      }],
+      "request": { "method": "GET", "header": [], "url": "{{gatewayUrl}}/api/web/cuentas/101" }
+    },
+    {
+      "name": "03 BFF Web completo",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+        "method": "GET", "header": [], "url": "{{gatewayUrl}}/api/web/cuentas/101"
+      }
+    },
+    {
+      "name": "04 BFF Mobile ligero",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+        "method": "GET", "header": [], "url": "{{gatewayUrl}}/api/mobile/cuentas/101"
+      }
+    },
+    {
+      "name": "05 BFF ATM saldo",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+        "method": "GET",
+        "header": [{ "key": "X-ATM-KEY", "value": "{{atmKey}}" }],
+        "url": "{{gatewayUrl}}/api/atm/cuentas/101/saldo"
+      }
+    },
+    {
+      "name": "06 Consultar cliente",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+        "method": "GET", "header": [], "url": "{{gatewayUrl}}/api/clientes/1"
+      }
+    },
+    {
+      "name": "07 Procesar pago",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"cuentaOrigenId\": 101,\n  \"monto\": 100,\n  \"descripcion\": \"Pago de prueba EFT\"\n}" },
+        "url": "{{gatewayUrl}}/api/pagos"
+      }
+    },
+    {
+      "name": "08 Procesar transferencia",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"cuentaOrigenId\": 101,\n  \"cuentaDestinoId\": 102,\n  \"monto\": 100,\n  \"descripcion\": \"Transferencia de prueba EFT\"\n}" },
+        "url": "{{gatewayUrl}}/api/pagos/transferencias"
+      }
+    },
+    {
+      "name": "09 Ejecutar tres jobs Batch",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+        "method": "POST", "header": [], "url": "{{gatewayUrl}}/api/batch/ejecutar"
+      }
+    },
+    {
+      "name": "10 Resumen Batch",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+        "method": "GET", "header": [], "url": "{{gatewayUrl}}/api/batch/resumen"
+      }
+    }
+  ]
+}

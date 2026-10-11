@@ -1,0 +1,9 @@
+﻿{
+    "canal":  "ATM",
+    "cuentaId":  101,
+    "montoRetirado":  500,
+    "saldoDisponible":  7500.00,
+    "moneda":  "CLP",
+    "estado":  "APROBADO",
+    "fecha":  "2026-10-11T06:45:20.644393193Z"
+}

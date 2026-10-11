@@ -1,0 +1,10 @@
+﻿{
+    "operacionId":  "b94d1768-c66d-4d96-b162-95b24376769d",
+    "tipo":  "TRANSFERENCIA",
+    "cuentaOrigenId":  101,
+    "cuentaDestinoId":  102,
+    "monto":  100,
+    "estado":  "APROBADO",
+    "descripcion":  "Transferencia de prueba EFT",
+    "fecha":  "2026-10-11T06:45:19.688648097Z"
+}

@@ -1,0 +1,23 @@
+﻿[
+    {
+        "job":  "interesesJob",
+        "estado":  "COMPLETED",
+        "inicio":  "2026-10-11T06:45:25.400+00:00",
+        "termino":  "2026-10-11T06:45:26.190+00:00",
+        "codigo_salida":  "COMPLETED"
+    },
+    {
+        "job":  "cuentasAnualesJob",
+        "estado":  "COMPLETED",
+        "inicio":  "2026-10-11T06:45:25.390+00:00",
+        "termino":  "2026-10-11T06:45:26.302+00:00",
+        "codigo_salida":  "COMPLETED"
+    },
+    {
+        "job":  "transaccionesJob",
+        "estado":  "COMPLETED",
+        "inicio":  "2026-10-11T06:45:25.372+00:00",
+        "termino":  "2026-10-11T06:45:26.276+00:00",
+        "codigo_salida":  "COMPLETED"
+    }
+]

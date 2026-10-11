@@ -1,0 +1,36 @@
+﻿ clientes 
+----------
+        5
+(1 row)
+
+ pagos 
+-------
+     3
+(1 row)
+
+ transacciones_batch 
+---------------------
+                 401
+(1 row)
+
+ intereses_batch 
+-----------------
+              50
+(1 row)
+
+ movimientos_anuales 
+---------------------
+                 614
+(1 row)
+
+ estados_anuales 
+-----------------
+              20
+(1 row)
+
+ errores_controlados 
+---------------------
+                1615
+(1 row)
+
+

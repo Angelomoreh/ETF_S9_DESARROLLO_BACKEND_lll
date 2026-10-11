@@ -1,0 +1,257 @@
+name: banco-xyz-eft
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: banco-eft-postgres
+    environment:
+      POSTGRES_DB: banco_cloud
+      POSTGRES_USER: banco_user
+      POSTGRES_PASSWORD: banco_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - banco_eft_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U banco_user -d banco_cloud"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  kafka:
+    image: apache/kafka:3.9.1
+    container_name: banco-eft-kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.3
+    container_name: banco-eft-keycloak
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8180:8080"
+    volumes:
+      - ./security/banco-xyz-realm.json:/opt/keycloak/data/import/banco-xyz-realm.json:ro
+
+  config-server:
+    build:
+      context: .
+      target: config-server
+    image: banco-eft/config-server:1.0.0
+    container_name: banco-eft-config-server
+    environment:
+      CONFIG_REPO: file:/config-repo
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60.0
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./config-repo:/config-repo:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:8888/actuator/health | grep UP"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  discovery-server:
+    build:
+      context: .
+      target: discovery-server
+    image: banco-eft/discovery-server:1.0.0
+    container_name: banco-eft-discovery-server
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60.0
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:8761/actuator/health | grep UP"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  cuentas-service:
+    build:
+      context: .
+      target: cuentas-service
+    image: banco-eft/cuentas-service:1.0.0
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/banco_cloud
+      DB_USER: banco_user
+      DB_PASSWORD: banco_pass
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery-server:8761/eureka/
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60.0
+    deploy:
+      replicas: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  transacciones-service:
+    build:
+      context: .
+      target: transacciones-service
+    image: banco-eft/transacciones-service:1.0.0
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/banco_cloud
+      DB_USER: banco_user
+      DB_PASSWORD: banco_pass
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery-server:8761/eureka/
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60.0
+    deploy:
+      replicas: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  clientes-service:
+    build:
+      context: .
+      target: clientes-service
+    image: banco-eft/clientes-service:1.0.0
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/banco_cloud
+      DB_USER: banco_user
+      DB_PASSWORD: banco_pass
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery-server:8761/eureka/
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60.0
+    deploy:
+      replicas: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  batch-service:
+    build:
+      context: .
+      target: batch-service
+    image: banco-eft/batch-service:1.0.0
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/banco_cloud
+      DB_USER: banco_user
+      DB_PASSWORD: banco_pass
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery-server:8761/eureka/
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  bff-web:
+    build:
+      context: .
+      target: bff-web
+    image: banco-eft/bff-web:1.0.0
+    container_name: banco-eft-bff-web
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery-server:8761/eureka/
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60.0
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  bff-mobile:
+    build:
+      context: .
+      target: bff-mobile
+    image: banco-eft/bff-mobile:1.0.0
+    container_name: banco-eft-bff-mobile
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery-server:8761/eureka/
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60.0
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  bff-atm:
+    build:
+      context: .
+      target: bff-atm
+    image: banco-eft/bff-atm:1.0.0
+    container_name: banco-eft-bff-atm
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery-server:8761/eureka/
+      ATM_API_KEY: BANCO-XYZ-ATM-2026
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60.0
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  api-gateway:
+    build:
+      context: .
+      target: api-gateway
+    image: banco-eft/api-gateway:1.0.0
+    container_name: banco-eft-api-gateway
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_URL: http://discovery-server:8761/eureka/
+      JWT_ISSUER_URI: http://localhost:8180/realms/banco-xyz
+      JWT_JWK_SET_URI: http://keycloak:8080/realms/banco-xyz/protocol/openid-connect/certs
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60.0
+    ports:
+      - "8443:8443"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+
+volumes:
+  banco_eft_data:

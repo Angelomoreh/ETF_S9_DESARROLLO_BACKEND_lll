@@ -1,0 +1,12 @@
+﻿{
+    "name":  "bff-web",
+    "profiles":  [
+                     "default"
+                 ],
+    "label":  null,
+    "version":  null,
+    "state":  null,
+    "propertySources":  [
+
+                        ]
+}

@@ -1,0 +1,1 @@
+﻿Keycloak entrego un token JWT funcional. El acceso externo usa HTTPS en el puerto 8443.

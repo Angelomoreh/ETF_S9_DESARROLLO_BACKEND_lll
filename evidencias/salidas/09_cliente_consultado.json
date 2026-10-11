@@ -1,0 +1,10 @@
+﻿{
+    "id":  1,
+    "rut":  "11111111-1",
+    "nombre":  "Diana Prince",
+    "email":  "diana.prince@banco.cl",
+    "telefono":  "+56911111111",
+    "segmento":  "PREMIUM",
+    "activo":  true,
+    "fechaActualizacion":  "2026-10-11T05:15:26.733476Z"
+}

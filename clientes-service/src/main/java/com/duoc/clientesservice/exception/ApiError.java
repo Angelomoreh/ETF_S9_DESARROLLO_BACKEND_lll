@@ -1,0 +1,12 @@
+package com.duoc.clientesservice.exception;
+
+import java.time.OffsetDateTime;
+
+public record ApiError(
+        OffsetDateTime fecha,
+        int estado,
+        String error,
+        String mensaje,
+        String ruta
+) {
+}

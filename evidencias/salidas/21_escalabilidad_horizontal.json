@@ -1,0 +1,89 @@
+﻿{
+    "application":  {
+                        "name":  "CLIENTES-SERVICE",
+                        "instance":  [
+                                         {
+                                             "instanceId":  "clientes-service:56453fcb3f5901cf64cd5ccbd8120c56",
+                                             "hostName":  "172.21.0.15",
+                                             "app":  "CLIENTES-SERVICE",
+                                             "ipAddr":  "172.21.0.15",
+                                             "status":  "UP",
+                                             "overriddenStatus":  "UNKNOWN",
+                                             "port":  {
+                                                          "$":  8083,
+                                                          "@enabled":  "true"
+                                                      },
+                                             "securePort":  {
+                                                                "$":  443,
+                                                                "@enabled":  "false"
+                                                            },
+                                             "countryId":  1,
+                                             "dataCenterInfo":  {
+                                                                    "@class":  "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
+                                                                    "name":  "MyOwn"
+                                                                },
+                                             "leaseInfo":  {
+                                                               "renewalIntervalInSecs":  30,
+                                                               "durationInSecs":  90,
+                                                               "registrationTimestamp":  1791701235900,
+                                                               "lastRenewalTimestamp":  1791701235900,
+                                                               "evictionTimestamp":  0,
+                                                               "serviceUpTimestamp":  1791701235900
+                                                           },
+                                             "metadata":  {
+                                                              "management.port":  "8083"
+                                                          },
+                                             "homePageUrl":  "http://172.21.0.15:8083/",
+                                             "statusPageUrl":  "http://172.21.0.15:8083/actuator/info",
+                                             "healthCheckUrl":  "http://172.21.0.15:8083/actuator/health",
+                                             "vipAddress":  "clientes-service",
+                                             "secureVipAddress":  "clientes-service",
+                                             "isCoordinatingDiscoveryServer":  "false",
+                                             "lastUpdatedTimestamp":  "1791701235900",
+                                             "lastDirtyTimestamp":  "1791701235814",
+                                             "actionType":  "ADDED"
+                                         },
+                                         {
+                                             "instanceId":  "clientes-service:12d43d54d1c1038c377a119d67002cc6",
+                                             "hostName":  "172.21.0.14",
+                                             "app":  "CLIENTES-SERVICE",
+                                             "ipAddr":  "172.21.0.14",
+                                             "status":  "UP",
+                                             "overriddenStatus":  "UNKNOWN",
+                                             "port":  {
+                                                          "$":  8083,
+                                                          "@enabled":  "true"
+                                                      },
+                                             "securePort":  {
+                                                                "$":  443,
+                                                                "@enabled":  "false"
+                                                            },
+                                             "countryId":  1,
+                                             "dataCenterInfo":  {
+                                                                    "@class":  "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
+                                                                    "name":  "MyOwn"
+                                                                },
+                                             "leaseInfo":  {
+                                                               "renewalIntervalInSecs":  30,
+                                                               "durationInSecs":  90,
+                                                               "registrationTimestamp":  1791695802867,
+                                                               "lastRenewalTimestamp":  1791701323460,
+                                                               "evictionTimestamp":  0,
+                                                               "serviceUpTimestamp":  1791695802353
+                                                           },
+                                             "metadata":  {
+                                                              "management.port":  "8083"
+                                                          },
+                                             "homePageUrl":  "http://172.21.0.14:8083/",
+                                             "statusPageUrl":  "http://172.21.0.14:8083/actuator/info",
+                                             "healthCheckUrl":  "http://172.21.0.14:8083/actuator/health",
+                                             "vipAddress":  "clientes-service",
+                                             "secureVipAddress":  "clientes-service",
+                                             "isCoordinatingDiscoveryServer":  "false",
+                                             "lastUpdatedTimestamp":  "1791695802867",
+                                             "lastDirtyTimestamp":  "1791695802260",
+                                             "actionType":  "ADDED"
+                                         }
+                                     ]
+                    }
+}

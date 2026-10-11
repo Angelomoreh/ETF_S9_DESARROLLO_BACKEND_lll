@@ -1,0 +1,10 @@
+﻿{
+    "operacionId":  "34e4f925-80ed-498d-a409-8422354f19c6",
+    "tipo":  "PAGO",
+    "cuentaOrigenId":  101,
+    "cuentaDestinoId":  null,
+    "monto":  100,
+    "estado":  "APROBADO",
+    "descripcion":  "Pago de servicio de prueba EFT",
+    "fecha":  "2026-10-11T06:45:19.290618073Z"
+}

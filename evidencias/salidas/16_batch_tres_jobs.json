@@ -1,0 +1,36 @@
+﻿{
+    "ejecucionId":  "50db2dbc-996b-47e8-84a5-668d6fbaf4f8",
+    "estadoGeneral":  "COMPLETADO",
+    "iniciada":  "2026-10-11T06:45:25.246474875Z",
+    "finalizada":  "2026-10-11T06:45:26.308679401Z",
+    "ejecucionParalela":  true,
+    "jobs":  [
+                 {
+                     "job":  "transaccionesJob",
+                     "estado":  "COMPLETED",
+                     "leidos":  1000,
+                     "escritos":  401,
+                     "omitidos":  599,
+                     "duracionMs":  904,
+                     "intentos":  1
+                 },
+                 {
+                     "job":  "interesesJob",
+                     "estado":  "COMPLETED",
+                     "leidos":  1000,
+                     "escritos":  370,
+                     "omitidos":  630,
+                     "duracionMs":  789,
+                     "intentos":  3
+                 },
+                 {
+                     "job":  "cuentasAnualesJob",
+                     "estado":  "COMPLETED",
+                     "leidos":  1000,
+                     "escritos":  614,
+                     "omitidos":  386,
+                     "duracionMs":  912,
+                     "intentos":  2
+                 }
+             ]
+}

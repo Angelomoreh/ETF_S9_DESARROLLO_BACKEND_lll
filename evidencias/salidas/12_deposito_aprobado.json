@@ -1,0 +1,10 @@
+﻿{
+    "operacionId":  "b3d2dfe2-c15b-441d-8b9e-aab702ef7f06",
+    "tipo":  "DEPOSITO",
+    "cuentaOrigenId":  null,
+    "cuentaDestinoId":  101,
+    "monto":  200,
+    "estado":  "APROBADO",
+    "descripcion":  "Deposito de prueba EFT",
+    "fecha":  "2026-10-11T06:45:19.742362806Z"
+}
